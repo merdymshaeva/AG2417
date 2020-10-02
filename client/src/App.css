@@ -51,11 +51,6 @@ body {
   padding: 0;
 }
 
-.leaflet-container {
-  height: 512px;
-  width: 512px;
-  margin-left: 1em;
-}
 
 .mapContainer {
   position: absolute;
@@ -76,4 +71,13 @@ body {
   z-index: 1 !important;
   padding: 6px;
   font-weight: bold;
+  }
+  
+  .mapboxgl-popup {
+    max-width: 200px;
+  }
+  
+  .mapboxgl-popup-content {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
   }

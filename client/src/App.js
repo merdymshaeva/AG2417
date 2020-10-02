@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import MapFrame from "./map";
@@ -7,7 +6,7 @@ import MapFrame from "./map";
 
 function App() {
   return (
-    <div className="App" id="map" >
+    <div className="App" >
       <MapFrame />
     </div>
   );
