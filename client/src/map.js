@@ -25,6 +25,7 @@ function MapFrame() {
         map = new mapboxgl.Map({
             container: refs.current,
             style: 'mapbox://styles/mapbox/streets-v11',
+            doubleClickZoom: false,
             center,
             zoom,
         });
@@ -55,18 +56,88 @@ function MapFrame() {
 
         map.on('click', (e) => {
             $.ajax({
-				type: 'GET',
-				url: '/api/get_closest_marker?lon=' + e.lngLat.lng + '&lat=' + e.lngLat.lat,
-				async: false,
-				success: function (data) {
-                    map.addSource('lines', {
-                        'type': 'geojson',
-                        'data': data[0].row_to_json
-                    });
-				}
-        })
-    })
-        map.on('dbclick', )
+                type: 'GET',
+                url: '/api/get_closest_marker?lon=' + e.lngLat.lng + '&lat=' + e.lngLat.lat,
+                async: false,
+                success: function (data) {
+                    const id = `lines${e.lngLat.lng}-${e.lngLat.lat}`;
+                    if (!map.getSource(id)) {
+                        map.addSource(id, {
+                            'type': 'geojson',
+                            'data': data[0].row_to_json
+                        });
+                        map.addLayer({
+                            id,
+                            source: id,
+                            type: 'line'
+                        });
+                    }
+                }
+            })
+        });
+
+        // =========== Double click to Create Markers ====================
+        function open_popup(e) {
+            var popupLocation = new L.LatLng(e.lngLat.lat,
+                e.lngLat.lng);
+            var popupContent =
+                `<div id='report'>
+					<h1 class='report-title'>Data Form</h1>
+					<p id='report-field-lat'>
+						<span class='report-field-label'>Lat: </span>
+						<span class='report-field-value'> ${e.lngLat.lat}</span > 
+					</p> 
+					<p id='report-field-lon'>
+						<span class='report-field-label'>Lng: </span>
+						<span class='report-field-value'>${e.lngLat.lng}</span> 
+					</p> 
+					<p id='report-field-3'>
+						<span class='report-field-label'>Name: </span>
+						<input id='marker_name'>
+					</p>
+					<div class='report-btns'>
+						<button id='save-button'>save</button>
+					</div>
+				</div>`;
+            var popup = new mapboxgl.Popup()
+                .setLngLat(popupLocation)
+                .setHTML(popupContent)
+                .setMaxWidth("300px")
+                .addTo(map);
+
+            $(document).on('click', '#save-button', function (e) {
+                // PREPARE FORM DATA
+                var loc_data =
+                {
+                    name: document.getElementById("marker_name").value,
+                    lat: $('#report-field-lat .report-field-value').text(),
+                    lon: $('#report-field-lon .report-field-value').text()
+                }
+                // DO POST
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "/save_marker",
+                    data: JSON.stringify(loc_data),
+                    success: function (marker) {
+                        popup.remove();
+                        new mapboxgl.Marker()
+                            .setLngLat([loc_data.lon, loc_data.lat])
+                            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                                .setHTML("Marker Name " + loc_data.name))
+                            .addTo(map);
+                    },
+                    error: function (e) {
+                        alert("Error!");
+                        console.log("ERROR: ", e);
+                    }
+                });
+            });
+        }
+        map.on('dblclick', e => {
+            console.log('dbclick' + e.lngLat);
+            open_popup(e);
+        });
 
     }, []);
 
