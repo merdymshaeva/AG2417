@@ -1,0 +1,13 @@
+/* .mapboxgl-canvas {
+    position: relative;
+    height: 100% !important;
+} */
+
+@media screen and (min-width: 640px) {
+    .mapboxgl-ctrl-geocoder--icon-close {
+        width: 16px;
+        height: 16px !important;
+        margin-top: 3px;
+        margin-right: 0;
+    }
+}
