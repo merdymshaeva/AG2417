@@ -64,6 +64,8 @@
   "dependencies": {
     "@amcharts/amcharts4": "^4.9.28",
     "@amcharts/amcharts4-geodata": "^4.1.16",
+    "@deck.gl/mapbox": "^8.2.9",
+    "@flowmap.gl/core": "^7.3.2",
     "@mapbox/mapbox-gl-draw": "^1.2.0",
     "@mapbox/mapbox-gl-geocoder": "^4.7.0",
     "animate.css": "4.1.0",
@@ -74,6 +76,7 @@
     "bootstrap": "4.5.0",
     "classnames": "^2.2.6",
     "concurrently": "^5.3.0",
+    "deck.gl": "^8.2.9",
     "echarts": "^4.8.0",
     "echarts-for-react": "^2.0.16",
     "express": "^4.17.1",
