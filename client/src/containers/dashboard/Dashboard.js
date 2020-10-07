@@ -8,11 +8,11 @@ import {
   Input,
 } from 'reactstrap';
 
-import Widget from '../../components/Widget';
+import Widget from '../../components/Widget/Widget';
 
-import Calendar from './components/calendar/Calendar';
-import Map from './components/maps/mapboxMap';
-import Rickshaw from './components/rickshaw/Rickshaw';
+import Calendar from './calendar/Calendar';
+import Map from './maps/mapboxMap';
+import Rickshaw from './rickshaw/Rickshaw';
 
 import AnimateNumber from 'react-animated-number';
 
@@ -71,12 +71,11 @@ class Dashboard extends React.Component {
         </h1>
 
         <Row>
-          <Col lg={7}>
-            <Widget className="bg-transparent">
+          <Col lg={8}>
+            <Widget className="bg-transparent mapWidget">
               <Map />
             </Widget>
           </Col>
-          <Col lg={1} />
 
           <Col lg={4}>
             <Widget

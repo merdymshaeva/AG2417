@@ -1,0 +1,42 @@
+/* .mapboxgl-canvas {
+    position: relative;
+    height: 100% !important;
+} */
+
+@media screen and (min-width: 640px) {
+    .mapboxgl-ctrl-geocoder--icon-close {
+        width: 16px;
+        height: 16px !important;
+        margin-top: 3px;
+        margin-right: 0;
+    }
+}
+.sliderWrap{
+    display: block;
+    margin-left: 1.2em;
+
+}
+
+.mapWidget{
+    color: black;
+}
+
+
+.MuiSelect-icon {
+    color: rgba(247, 242, 242, 0.54) !important;
+}
+.MuiSelect-select.MuiSelect-select {
+    color: aliceblue;
+}
+
+.MuiFormHelperText-root {
+    color: rgba(247, 242, 242, 0.54) !important;
+}
+
+.MuiFormLabel-root {
+    color: rgba(247, 242, 242, 0.54) !important;
+}
+
+.makeStyles-formControl-4 {
+    margin: 2px 8px 8px 20px !important;
+}

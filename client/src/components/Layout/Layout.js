@@ -11,7 +11,7 @@ import TablesStatic from '../../pages/tables/static';
 import MapsGoogle from '../../pages/components/maps/google';
 import CoreTypography from '../../pages/typography';
 import Charts from '../../pages/components/charts/Charts';
-import Dashboard from '../../pages/dashboard';
+import Dashboard from '../../containers/dashboard';
 
 import Header from '../Header';
 import Sidebar from '../Sidebar';

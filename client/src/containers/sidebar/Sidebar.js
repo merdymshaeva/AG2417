@@ -1,19 +1,15 @@
 import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Progress, Alert } from 'reactstrap';
-import { withRouter } from 'react-router-dom';
-import { dismissAlert } from '../../actions/alerts';
+import {connect} from 'react-redux';
+import {Progress, Alert} from 'reactstrap';
+import {withRouter} from 'react-router-dom';
+import {dismissAlert} from '../../actions/alerts';
 import s from './Sidebar.module.scss';
 import LinksGroup from './LinksGroup';
-import SelectData from '../dashboard/select';
 
-import { changeActiveSidebarItem } from '../../actions/navigation';
-import { logoutUser } from '../../actions/user';
-import { setFlowMax, setLocMax } from '../../actions/mapAction';
-import { SliderPresentation } from '../dashboard/slider'
-
+import {changeActiveSidebarItem} from '../../actions/navigation';
+import {logoutUser} from '../../actions/user';
 
 class Sidebar extends React.Component {
     static propTypes = {
@@ -88,7 +84,7 @@ class Sidebar extends React.Component {
                         link="/app/main"
                         index="main"
                     />
-                    <h5 className={[s.navTitle, s.groupTitle].join(' ')}>FILTERS</h5>
+                    <h5 className={[s.navTitle, s.groupTitle].join(' ')}>TEMPLATE</h5>
                     <LinksGroup
                         onActiveSidebarItemChange={activeItem => this.props.dispatch(changeActiveSidebarItem(activeItem))}
                         activeItem={this.props.activeItem}
@@ -138,25 +134,38 @@ class Sidebar extends React.Component {
                     />
                 </ul>
                 <h5 className={s.navTitle}>
-                    STYLE
+                    LABELS
                     {/* eslint-disable-next-line */}
                     <a className={s.actionLink}>
-                        <i className={`${s.glyphiconSm} glyphicon glyphicon-plus float-right`} />
+                        <i className={`${s.glyphiconSm} glyphicon glyphicon-plus float-right`}/>
                     </a>
                 </h5>
                 {/* eslint-disable */}
-                <SliderPresentation
-                    flowMax={this.props.flowMax}
-                    setMaxFlowMagnitude={(v) => this.props.dispatch(setFlowMax(v))}
-                    locMax={this.props.locMax}
-                    setMaxLocationTotal={v => this.props.dispatch(setLocMax(v))}
-                />
+                <ul className={s.sidebarLabels}>
+                    <li>
+                        <a href="#">
+                            <i className="fa fa-circle text-success mr-2"/>
+                            <span className={s.labelName}>My Recent</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i className="fa fa-circle text-primary mr-2"/>
+                            <span className={s.labelName}>Starred</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i className="fa fa-circle text-danger mr-2"/>
+                            <span className={s.labelName}>Background</span>
+                        </a>
+                    </li>
+                </ul>
                 {/* eslint-enable */}
                 <h5 className={s.navTitle}>
-                    DATA
+                    PROJECTS
                 </h5>
-                <SelectData />
-                {/* <div className={s.sidebarAlerts}>
+                <div className={s.sidebarAlerts}>
                     {this.props.alertsList.map(alert => // eslint-disable-line
                         <Alert
                             key={alert.id}
@@ -166,13 +175,13 @@ class Sidebar extends React.Component {
                                 this.dismissAlert(alert.id);
                             }}
                         >
-                            <span>{alert.title}</span><br />
+                            <span>{alert.title}</span><br/>
                             <Progress className={`bg-custom-dark progress-xs mt-1`} color={alert.color}
-                                value={alert.value} />
+                                      value={alert.value}/>
                             <small>{alert.footer}</small>
                         </Alert>,
                     )}
-                </div> */}
+                </div>
             </nav>
         );
     }
@@ -184,8 +193,6 @@ function mapStateToProps(store) {
         sidebarStatic: store.navigation.sidebarStatic,
         alertsList: store.alerts.alertsList,
         activeItem: store.navigation.activeItem,
-        flowMax: store.mapStyle.flowMax,
-        locMax: store.mapStyle.locMax
     };
 }
 
