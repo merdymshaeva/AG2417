@@ -39,6 +39,7 @@ export default function mapFrame({ data }) {
     });
     return (
         <div ref={refs}>
+            <StaticMap mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN} />
         </div>
         // <DeckGL
         //     initialViewState={INITIAL_VIEW_STATE}
