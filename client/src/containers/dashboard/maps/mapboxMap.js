@@ -1,45 +1,58 @@
 /// app.js
-import React, {createRef} from 'react';
-import DeckGL from '@deck.gl/react';
-import { LineLayer } from '@deck.gl/layers';
+import React, {useState, createRef, useEffect, useRef} from 'react';
+import DeckGL from 'deck.gl';
+import {Deck} from '@deck.gl/core';
+import { LineLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { StaticMap } from 'react-map-gl';
 import { MAPBOX_ACCESS_TOKEN } from '../../../config';
+import s from './am4chartMap.module.scss';
 
 
 // Viewport settings
 const INITIAL_VIEW_STATE = {
-    longitude: -122.41669,
-    latitude: 37.7853,
-    zoom: 13,
-    pitch: 0,
-    bearing: 0
-};
+    latitude: 37.8,
+    longitude: -122.45,
+    zoom: 15
+  };
 
-// Data to be used by the LineLayer
-const data = [
-    { sourcePosition: [-122.41669, 37.7853], targetPosition: [-122.41669, 37.781] }
-];
 
-export default function mapFrame({ data }) {
+function MapFrame() {
+    const [center, setCenter] = useState([18.061527, 59.312578]);
+    const [zoom, setZoom] = useState(11);
+    var deckgl;
     const refs = createRef();
     const layers = [
-        new LineLayer({ id: 'line-layer', data })
+        new ScatterplotLayer({
+            data: [
+              {position: [-122.45, 37.8], color: [255, 0, 0], radius: 1000}
+            ]
+          }),
     ];
 
-    const deck = new DeckGL({
-        mapboxAccessToken: INITIAL_VIEW_STATE,
-        mapStyle: 'https://free.tilehosting.com/styles/positron/style.json?key=2OrAmqAgbK4HwBOq6vWN',
-        container: refs.current,
-        latitude: 38,
-        longitude: 35.8,
-        zoom: 5.9,
-        maxZoom: 16,
-        pitch: 45,
-        layers: [layers]
-    });
+    useEffect(() => {
+        deckgl = new DeckGL({
+            container: refs.current,
+            initialViewState: INITIAL_VIEW_STATE,
+            controller: true,
+            layers: [
+              new ScatterplotLayer({
+                data: [
+                  {position: [-122.45, 37.8], color: [255, 0, 0], radius: 100}
+                ],
+                getColor: d => d.color,
+                getRadius: d => d.radius
+              })
+            ]
+          });
+        console.log(deckgl)
+    }, [])
+
     return (
-        <div ref={refs}>
-            <StaticMap mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN} />
+        <div className={s.mapChart}>
+            <div className={s.sidebarStyle}>
+                <div>Longitude: {center[0]} | Latitude: {center[1]} | Zoom: {zoom}</div>
+            </div>
+            <div ref={refs} className={s.map} id='map' />
         </div>
         // <DeckGL
         //     initialViewState={INITIAL_VIEW_STATE}
@@ -50,3 +63,4 @@ export default function mapFrame({ data }) {
         // </DeckGL>
     );
 }
+export default MapFrame;

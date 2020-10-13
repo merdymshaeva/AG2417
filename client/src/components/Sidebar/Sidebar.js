@@ -11,8 +11,8 @@ import SelectData from '../dashboard/select';
 
 import { changeActiveSidebarItem } from '../../actions/navigation';
 import { logoutUser } from '../../actions/user';
-import { setFlowMax, setLocMax } from '../../actions/mapAction';
-import { SliderPresentation } from '../dashboard/slider'
+import { setFlowMax, setLocMax, setTopFlows, setOpacity, setHover } from '../../actions/mapAction';
+import { SliderPresentation, InputSlider } from '../dashboard/slider'
 
 
 class Sidebar extends React.Component {
@@ -75,8 +75,8 @@ class Sidebar extends React.Component {
                 }}
             >
                 <header className={s.logo}>
-                    <a href="https://demo.flatlogic.com/light-blue-react/">Light <span
-                        className="fw-bold">Blue</span></a>
+                    <a href="https://demo.flatlogic.com/light-blue-react/">ShareFlow Stockholm</a> 
+                    {/* <span className="fw-bold">Blue</span></a> */}
                 </header>
                 <ul className={s.nav}>
                     <LinksGroup
@@ -89,7 +89,12 @@ class Sidebar extends React.Component {
                         index="main"
                     />
                     <h5 className={[s.navTitle, s.groupTitle].join(' ')}>FILTERS</h5>
-                    <LinksGroup
+                    <InputSlider
+                        topFlows={this.props.topFlows}
+                        setTopFlows={v => this.props.dispatch(setTopFlows(v))}
+                    />
+
+                    {/* <LinksGroup
                         onActiveSidebarItemChange={activeItem => this.props.dispatch(changeActiveSidebarItem(activeItem))}
                         activeItem={this.props.activeItem}
                         header="Typography"
@@ -135,7 +140,7 @@ class Sidebar extends React.Component {
                                 header: 'Maps', link: '/app/maps',
                             },
                         ]}
-                    />
+                    /> */}
                 </ul>
                 <h5 className={s.navTitle}>
                     STYLE
@@ -150,6 +155,10 @@ class Sidebar extends React.Component {
                     setMaxFlowMagnitude={(v) => this.props.dispatch(setFlowMax(v))}
                     locMax={this.props.locMax}
                     setMaxLocationTotal={v => this.props.dispatch(setLocMax(v))}
+                    // opacity={this.props.opacity}
+                    setOpacity={v => this.props.dispatch(setOpacity(v))}
+                    hover={this.props.hover}
+                    setHover={v => this.props.dispatch(setHover(v))}
                 />
                 {/* eslint-enable */}
                 <h5 className={s.navTitle}>

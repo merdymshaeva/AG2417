@@ -11,7 +11,7 @@ import {
 import Widget from '../../components/Widget/Widget';
 
 import Calendar from './calendar/Calendar';
-import Map from './maps/mapboxMap';
+import Map from './maps/flowmap';
 import Rickshaw from './rickshaw/Rickshaw';
 
 import AnimateNumber from 'react-animated-number';
@@ -65,15 +65,16 @@ class Dashboard extends React.Component {
     return (
       <div className={s.root}>
         <h1 className="page-title">Dashboard &nbsp;
-          <small>
+          {/* <small>
             <small>The Lucky One</small>
-          </small>
+          </small> */}
         </h1>
 
         <Row>
           <Col lg={8}>
             <Widget className="bg-transparent mapWidget">
               <Map />
+               {/* <iframe width="800" height="600" src="https://flowmap.blue/1uHumN4NeDIm1YFXnYowJWOXc_oGFsKIfSCXhdrGYaHg/embed" frameBorder="0" allowFullScreen></iframe> */}
             </Widget>
           </Col>
 

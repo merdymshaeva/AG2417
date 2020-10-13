@@ -1,15 +1,22 @@
-import { GET_DATA, PROMISE_FAILURE } from '../actions/mapAction';
+import { GET_TYPES, GET_DATA, PROMISE_FAILURE } from '../actions/mapAction';
 const initialState = {
-    url: null,
-    data: null,
+    types: [],
+    data: {
+        locations: null,
+        flows: null
+    },
     error: null,
 }
 
 export default function mapData (state = initialState, action) {
     switch (action.type) {
+        case GET_TYPES:
+            return {
+                ...state,
+                types: action.value
+            }
         case GET_DATA:
             return {
-                url: action.url,
                 ...state,
                 data: action.data
             }

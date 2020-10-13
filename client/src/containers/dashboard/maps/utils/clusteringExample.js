@@ -20,6 +20,8 @@ import { Flow, FlowAccessors, isFeatureCollection, Location, LocationAccessors }
 import React from 'react';
 import { ViewState } from '@flowmap.gl/core';
 import Example from './Example';
+import { relativeTimeThreshold } from 'moment';
+import turf from 'turf';
 
 // export interface Props extends FlowAccessors, LocationAccessors {
 //   flows: Flow[];
@@ -35,6 +37,15 @@ import Example from './Example';
 class ClusteringExample extends React.Component {
   constructor(props) {
     super(props);
+    const {clusterIndex, aggregateFlowsByZoom, maxZoom} = this.aggregate()
+    this.state = {
+      clusteredLocations: clusterIndex.getClusterNodesFor(maxZoom),
+      aggregateFlows: aggregateFlowsByZoom.get(maxZoom),
+      flows: this.props.flows
+    };
+  }
+
+  aggregate() {
     const { flows, getLocationId, getLocationCentroid, getFlowOriginId, getFlowDestId, getFlowMagnitude } = this.props;
     let clusterLevels;
     const locations = isFeatureCollection(this.props.locations) ? this.props.locations.features : this.props.locations;
@@ -55,31 +66,29 @@ class ClusteringExample extends React.Component {
     for (const zoom of clusterIndex.availableZoomLevels) {
       aggregateFlowsByZoom.set(
         zoom,
-        clusterIndex.aggregateFlows(flows, zoom, { getFlowOriginId, getFlowDestId, getFlowMagnitude }),
+        clusterIndex.aggregateFlows(this.props.flows, zoom, { getFlowOriginId, getFlowDestId, getFlowMagnitude }),
       );
     }
     const maxZoom = Math.max.apply(null, clusterIndex.availableZoomLevels);
-    this.clusterIndex = clusterIndex;
-    this.aggregateFlowsByZoom = aggregateFlowsByZoom;
-    this.state = {
-      clusteredLocations: this.clusterIndex.getClusterNodesFor(maxZoom),
-      aggregateFlows: this.aggregateFlowsByZoom.get(maxZoom),
-    };
+    return {clusterIndex, aggregateFlowsByZoom, maxZoom}
   }
 
   handleViewStateChange = (viewState) => {
-    const { availableZoomLevels } = this.clusterIndex;
+    const {clusterIndex, aggregateFlowsByZoom, maxZoom} = this.aggregate()
+    const { availableZoomLevels } = clusterIndex;
     const { zoom } = viewState;
     const clusterZoom = Cluster.findAppropriateZoomLevel(availableZoomLevels, zoom);
     this.setState({
-      clusteredLocations: this.clusterIndex.getClusterNodesFor(clusterZoom),
-      aggregateFlows: this.aggregateFlowsByZoom.get(clusterZoom),
+      clusteredLocations: clusterIndex.getClusterNodesFor(clusterZoom),
+      aggregateFlows: aggregateFlowsByZoom.get(clusterZoom),
+      flows: this.props.flows
     });
   };
 
   render() {
     const { getFlowOriginId, getFlowDestId, getFlowMagnitude } = this.props;
     const { clusteredLocations, aggregateFlows } = this.state;
+    // console.log(turf.centroid(turf.polygon(clusteredLocations[0])))
     if (!clusteredLocations || !aggregateFlows) {
       return null;
     }
@@ -99,3 +108,68 @@ class ClusteringExample extends React.Component {
 }
 
 export default ClusteringExample;
+
+// export interface Props extends FlowAccessors, LocationAccessors {
+//   flows: Flow[];
+//   locations: Location[];
+//   clusterLevels?: Cluster.ClusterLevel[];
+// }
+
+// interface State {
+//   clusteredLocations: Location[] | undefined;
+//   aggregateFlows: Flow[] | undefined;
+// }
+// export default function ClusteringExample(props) {
+//   const { flows, getLocationId, getLocationCentroid, getFlowOriginId, getFlowDestId, getFlowMagnitude } = props;
+//   console.log('flows',flows)
+//   let clusterLevels;
+//   const locations = isFeatureCollection(props.locations) ? props.locations.features : props.locations;
+//   if (props.clusterLevels) {
+//     clusterLevels = props.clusterLevels;
+//   } else {
+//     const getLocationWeight = Cluster.makeLocationWeightGetter(flows, {
+//       getFlowOriginId,
+//       getFlowDestId,
+//       getFlowMagnitude,
+//     });
+//     clusterLevels = Cluster.clusterLocations(locations, { getLocationId, getLocationCentroid }, getLocationWeight, {
+//       makeClusterName: (id, numPoints) => `Cluster #${id} of ${numPoints} locations`,
+//     });
+//   }
+//   const clusterIndex = Cluster.buildIndex(clusterLevels);
+//   const aggregateFlowsByZoom = new Map();
+//   for (const zoom of clusterIndex.availableZoomLevels) {
+//     aggregateFlowsByZoom.set(
+//       zoom,
+//       clusterIndex.aggregateFlows(flows, zoom, { getFlowOriginId, getFlowDestId, getFlowMagnitude }),
+//     );
+//   }
+//   const maxZoom = Math.max.apply(null, clusterIndex.availableZoomLevels);
+//   const [clusteredLocations, setClusteredLocations] = useState(clusterIndex.getClusterNodesFor(maxZoom));
+//   const [aggregateFlows, setAggregateFlows] = useState(aggregateFlowsByZoom.get(maxZoom));
+
+
+//   const handleViewStateChange = (viewState) => {
+//     const { availableZoomLevels } = clusterIndex;
+//     const { zoom } = viewState;
+//     const clusterZoom = Cluster.findAppropriateZoomLevel(availableZoomLevels, zoom);
+//     setClusteredLocations(clusterIndex.getClusterNodesFor(clusterZoom));
+//     setAggregateFlows(aggregateFlowsByZoom.get(clusterZoom))
+//   };
+
+//   if (!clusteredLocations || !aggregateFlows) {
+//     return null;
+//   }
+//   return (
+//     <Example
+//       locations={clusteredLocations}
+//       flows={aggregateFlows}
+//       getLocationId={(loc) => loc.id}
+//       getLocationCentroid={(loc) => loc.centroid}
+//       getFlowOriginId={(flow) => (Cluster.isAggregateFlow(flow) ? flow.origin : getFlowOriginId(flow))}
+//       getFlowDestId={(flow) => (Cluster.isAggregateFlow(flow) ? flow.dest : getFlowDestId(flow))}
+//       getFlowMagnitude={(flow) => (Cluster.isAggregateFlow(flow) ? flow.count : getFlowMagnitude(flow))}
+//       onViewStateChange={handleViewStateChange}
+//     />
+//   );
+// }

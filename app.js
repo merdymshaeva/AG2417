@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'lab4',
+    database: 'ag2417',
     password: 'kth10044!',
     port: 5432
 });
@@ -46,14 +46,56 @@ app.post('/save_marker', (req, res) => {
     });
 });
 
-// app.get('/lab4', (req, res) => res.sendFile(__dirname + '/lab4.html'))
-app.get('/api/get_markers', (req, res) => {
-    pool.query('select * from tbl_markers;', (err, dbResponse) => {
-        if (err) console.log(err);
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.send(dbResponse.rows);
+
+const FLOWS = ['AuxTimePeakT', 
+'BicycleDemandOtherT', 
+'CarDemandBusinessT', 'CarDemandOtherT', 'CarDemandWorkT', 'CarDistanceT', 'CarTimeOffpeakT', 'CarTimePeakT',
+'FirstWaitTimeOffpeakT', 'FirstWaitTimePeakT', 
+'InvehicleTimeOffpeakT', 'InvehicleTimePeakT'];
+app.get('/api/get_flowtypes', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(FLOWS);
+})
+
+FLOWS.forEach(flow => {
+    app.get(`/api/get_flows/${flow}`, (req, res) => {
+        pool.query(`SELECT * FROM public."${flow}";`, (err, dbResponse) => {
+            if (err) console.log(err);
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.send(dbResponse.rows);
+        })
     })
 })
+
+
+app.get('/api/get_locations', (req, res) => {
+    var q = `SELECT row_to_json(fc)FROM (
+        SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM
+        (
+        SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As
+        geometry
+        , row_to_json((SELECT l FROM (SELECT abbr,baskod95) As l)) As
+        properties
+        FROM stockholm_centre_geom As lg
+        ) As f ) As fc;`
+    pool.query(q, (err, dbResponse) => {
+        if (err) console.log(err);
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.send(dbResponse.rows[0].row_to_json);
+    })
+})
+
+
+// app.get('/api/get_markers', (req, res) => {
+
+
+//     pool.query(q, (err, dbResponse) => {
+//         if (err) console.log(err);
+//         res.setHeader('Access-Control-Allow-Origin', '*');
+//         res.send(dbResponse.rows);
+
+//     });
+// });
 
 app.get('/api/get_markers_geojson', (req, res) => {
     var q =
@@ -62,9 +104,9 @@ app.get('/api/get_markers_geojson', (req, res) => {
         (
         SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As
         geometry
-        , row_to_json((SELECT l FROM (SELECT id,name) As l)) As
+        , row_to_json((SELECT l FROM (SELECT sampers,baskod95) As l)) As
         properties
-        FROM tbl_markers As lg
+        FROM stockholm_centre_geom As lg
         ) As f ) As fc;`
 
     pool.query(q, (err, dbResponse) => {
@@ -77,7 +119,7 @@ app.get('/api/get_markers_geojson', (req, res) => {
 
 app.get('/api/get_closest_marker', (req, res) => {
     console.log('Request received on the server to sendclosest marker ');
-    var lat = req.query.lat; 
+    var lat = req.query.lat;
     var lon = req.query.lon;
     var q =
         `with tbl_to_closest_point as (
@@ -126,4 +168,4 @@ app.get('/api/get_closest_marker', (req, res) => {
     });
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));

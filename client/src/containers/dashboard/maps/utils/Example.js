@@ -16,7 +16,8 @@
  */
 
 import { Flow, FlowAccessors, FlowLayerPickingInfo, Location, LocationAccessors } from '@flowmap.gl/core';
-import FlowMap, { getViewStateForLocations, Highlight, LegendBox, LocationTotalsLegend } from '@flowmap.gl/react';
+import { getViewStateForLocations, Highlight, LegendBox, LocationTotalsLegend } from '@flowmap.gl/react';
+import FlowMap from './FlowMap';
 import React, { useState } from 'react';
 import { ViewState } from '@flowmap.gl/core';
 import { MAPBOX_ACCESS_TOKEN } from '../../../../config';
@@ -24,7 +25,6 @@ import { SliderPresentation } from '../../../../components/dashboard/slider';
 import { useSelector, useDispatch } from 'react-redux';
 import { setFlowMax, setLocMax } from '../../../../actions/mapAction';
 
-const SHOW_TOP_FLOWS = 10000;
 
 
 const tooltipStyle = {
@@ -43,17 +43,21 @@ const tooltipStyle = {
 };
 
 export default function Example(props) {
-  const { locations, flows, getLocationCentroid, onViewStateChange, getLocationId, getFlowMagnitude  } = props;
-  const [tooltip, setTooltip] = useState();
-  const initialViewState = getViewStateForLocations(locations, getLocationCentroid, [
-    window.innerWidth,
-    window.innerHeight,
-  ]);
-
-  const { flowMax, locMax } = useSelector(state => state.mapStyle);
+  const { locations, flows, getLocationCentroid, onViewStateChange, getLocationId, getFlowMagnitude } = props;
   const dispatch = useDispatch();
-  const flowMagnitudeExtent = [0, Math.round(20000/flowMax)];
-  const locationTotalsExtent = [0, Math.round(200000/locMax)];
+  const [tooltip, setTooltip] = useState();
+  const { flowMax, locMax, topFlows, lonLat, opacity, hover } = useSelector(state => state.mapStyle);
+  const initialViewState = {
+    ...getViewStateForLocations(locations, getLocationCentroid, [
+      window.innerWidth,
+      window.innerHeight,
+    ]),
+    zoom:12,
+    // ...lonLat
+  };
+ 
+  const flowMagnitudeExtent = [0, Math.round(20000 / flowMax)];
+  const locationTotalsExtent = [0, Math.round(200000 / locMax)];
 
   const handleViewStateChange = (viewState) => {
     if (onViewStateChange) {
@@ -99,9 +103,10 @@ export default function Example(props) {
         initialViewState={initialViewState}
         flowMagnitudeExtent={flowMagnitudeExtent}
         locationTotalsExtent={locationTotalsExtent}
+        opacity={opacity}
         showTotals={true}
         showLocationAreas={false}
-        showOnlyTopFlows={SHOW_TOP_FLOWS}
+        showOnlyTopFlows={topFlows}
         flows={flows}
         locations={locations}
         mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
@@ -115,9 +120,9 @@ export default function Example(props) {
         <LocationTotalsLegend />
       </LegendBox>
       <LegendBox bottom={35} right={10}>
-        {`Showing ${flows.length > SHOW_TOP_FLOWS ? `top ${SHOW_TOP_FLOWS} of` : ''} ${flows.length} flows. `}
+        {`Showing ${flows.length > topFlows ? `top ${topFlows} of` : ''} ${flows.length} flows. `}
       </LegendBox>
-      {renderTooltip()}
+      {hover && renderTooltip()}
     </>
   );
 }
