@@ -47,3 +47,8 @@
 .makeStyles-root-1 {
     margin-left: 1.2em;
 }
+
+.Widget_widget__xzerc.bg-transparent {
+    display: none;
+    box-shadow: none;
+}

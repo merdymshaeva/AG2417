@@ -35,6 +35,7 @@ export default function FlowMap(props) {
   const defaultProps = {
     mixBlendMode: 'multiply'
   }
+  const mapRef = useRef();
   const [animationFrame, setAnimationFrame] = useState(-1);
 
   const [selectedLocationIds, setSelectedLocationIds] = useState();
@@ -67,7 +68,7 @@ export default function FlowMap(props) {
         props.onViewStateChange(viewState);
       }
     }
-    return () =>{
+    return () => {
       document.removeEventListener('keydown', handleKeyDown);
       stopAnimation();
     }
@@ -240,6 +241,7 @@ export default function FlowMap(props) {
         controller={true}
         onViewStateChange={handleViewStateChange}
       >
+
         <StaticMap width="100%" height="100%" mapboxApiAccessToken={mapboxAccessToken} mapStyle={mapStyle} />
       </DeckGL>
     </>

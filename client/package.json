@@ -102,6 +102,7 @@
     "react-dom": "^16.13.1",
     "react-google-maps": "^9.4.5",
     "react-map-gl": "^5.2.8",
+    "react-map-gl-geocoder": "^2.1.5",
     "react-redux": "^7.2.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
