@@ -5,6 +5,7 @@ export const CLOSE_SIDEBAR = 'CLOSE_SIDEBAR';
 export const CHANGE_ACTIVE_SIDEBAR_ITEM = 'CHANGE_ACTIVE_SIDEBAR_ITEM';
 export const CHANGE_SIDEBAR_POSITION = 'CHANGE_SIDEBAR_POSITION';
 export const CHANGE_SIDEBAR_VISIBILITY = 'CHANGE_SIDEBAR_VISIBILITY';
+export const CHANGE_DASHBOARD_VISIBILITY = 'CHANGE_DASHBOARD_VISIBILITY';
 
 export function openSidebar() {
   return {
@@ -35,6 +36,13 @@ export function changeActiveSidebarItem(activeItem) {
 export function changeSidebarVisibility(nextVisibility) {
   return {
     type: CHANGE_SIDEBAR_VISIBILITY,
+    payload: nextVisibility,
+  };
+}
+
+export function changeDashboardVisibility(nextVisibility) {
+  return {
+    type: CHANGE_DASHBOARD_VISIBILITY,
     payload: nextVisibility,
   };
 }

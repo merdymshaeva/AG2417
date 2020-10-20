@@ -21,7 +21,7 @@ import {
   ButtonGroup,
   Button,
   Form,
-  FormGroup,
+  FormGroup
 } from 'reactstrap';
 import Notifications from '../Notifications';
 import { logoutUser } from '../../actions/user';
@@ -127,7 +127,7 @@ class Header extends React.Component {
   render() {
     return (
       <Navbar className={`d-print-none ${s.root}`}>
-        <UncontrolledAlert className={`${s.alert} mr-3 d-lg-down-none animate__animated animate__bounceIn animate__delay-1s`}>
+        {/* <UncontrolledAlert className={`${s.alert} mr-3 d-lg-down-none animate__animated animate__bounceIn animate__delay-1s`}>
           <i className="fa fa-info-circle mr-1" /> Check out Light Blue <button className="btn-link" onClick={() => this.setState({ settingsOpen: true })}>settings</button> on
           the right!
         </UncontrolledAlert>
@@ -140,8 +140,8 @@ class Header extends React.Component {
               onBlur={() => this.setState({ searchFocused: false })}
             />
           </InputGroup>
-        </Collapse>
-        <Form className="d-md-down-none mr-3 ml-3" inline>
+        </Collapse> */}
+        {/* <Form className="d-md-down-none mr-3 ml-3" inline>
           <FormGroup>
             <InputGroup className="input-group-no-border">
               <InputGroupAddon addonType="prepend">
@@ -150,15 +150,15 @@ class Header extends React.Component {
               <Input id="search-input" className="input-transparent" placeholder="Search" />
             </InputGroup>
           </FormGroup>
-        </Form>
+        </Form> */}
 
         <Nav className="ml-md-0 d-flex nav-responsive">
           <Dropdown nav isOpen={this.state.notificationsOpen} toggle={this.toggleNotifications} id="basic-nav-dropdown" className={`${s.notificationsMenu}`} style={{marginRight: 'auto'}}>
             <DropdownToggle nav caret style={{color: "#f4f4f5", padding: 0}}>
-              <span className={`${s.avatar} rounded-circle thumb-sm float-left mr-2`}>
+              {/* <span className={`${s.avatar} rounded-circle thumb-sm float-left mr-2`}>
                 <img src={avatar} alt="..."/>
-              </span>
-              <span className={`small ${s.accountCheck}`}>Philip smith</span>
+              </span> */}
+{/*               <span className={`small ${s.accountCheck}`}>Philip smith</span> */}
               <Badge className={s.badge} color="primary">13</Badge>
             </DropdownToggle>
             <DropdownMenu right className={`${s.notificationsWrapper} py-0 animate__animated animate__faster animate__fadeInUp`}>
@@ -178,7 +178,7 @@ class Header extends React.Component {
               <DropdownItem>
                 <img className={s.image} src={sender1} alt="" />
                 <div className={s.details}>
-                  <div>Jane Hew</div>
+                  <div>Janet Hew</div>
                   <div className={s.text}>
                     Hey, John! How is it going? ...
                   </div>
@@ -226,6 +226,17 @@ class Header extends React.Component {
                 <Button color="primary" onClick={() => this.toggleVisibilitySidebar('show')} className={this.props.sidebarVisibility === 'show' ? 'active' : ''}>Show</Button>
                 <Button color="primary" onClick={() => this.toggleVisibilitySidebar('hide')} className={this.props.sidebarVisibility === 'hide' ? 'active' : ''}>Hide</Button>
               </ButtonGroup>
+
+              <h6 className="mt-2">DO YOU WANT HAPPY BUTTON OR SAD ONES?</h6>
+              <FormGroup check>
+                    <Input type="radio" name="radio1" />{' '}
+                     HAPPY BUTTON
+              </FormGroup>
+              <FormGroup check>
+                    <Input type="radio" name="radio1" />{' '}
+                     HAPPY BUTTON NR TWO
+              </FormGroup>
+
             </DropdownMenu>
           </Dropdown>
           <Dropdown nav isOpen={this.state.supportOpen} toggle={this.toggleSupportDropdown}>

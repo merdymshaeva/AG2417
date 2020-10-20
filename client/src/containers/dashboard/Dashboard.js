@@ -5,7 +5,7 @@ import {
   Progress,
   Table,
   Label,
-  Input,
+  Input, FormGroup, CustomInput
 } from 'reactstrap';
 
 import Widget from '../../components/Widget/Widget';
@@ -64,7 +64,7 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div className={s.root}>
-        <h1 className="page-title">Dashboard &nbsp;
+        <h1 className="page-title">Flow Map &nbsp;
           {/* <small>
             <small>The Lucky One</small>
           </small> */}
@@ -82,14 +82,38 @@ class Dashboard extends React.Component {
             <Widget
               className="bg-transparent"
               title={<h5> Map
-                      <span className="fw-semi-bold">&nbsp;Statistics</span></h5>} settings refresh close
+                      <span className="fw-semi-bold">&nbsp;VALUES</span></h5>}
             >
-              <p>Status: <strong>Live</strong></p>
-              <p>
+
+              <FormGroup>
+                                <label for="exampleCheckbox">DATA (again)</label>
+                        <div>
+                            <CustomInput type="radio" id="exampleCustomRadio11" name="customRadio2" label="Mosaic Data" />
+                            <CustomInput type="radio" id="exampleCustomRadio21" name="customRadio2" label="Statistics" />
+                            {/* <CustomInput type="radio" id="exampleCustomRadio3" label="But not this disabled one" disabled /> */}
+                            {/* <CustomInput type="radio" id="exampleCustomRadio4" label="Can't click this label to select!" htmlFor="exampleCustomRadio4_X" disabled /> */}
+                        </div>
+              </FormGroup>
+
+
+              <FormGroup>
+                                <label for="exampleCheckbox">TIME OF DEMAND</label>
+                        <div>
+                            <CustomInput type="radio" id="exampleCustomRadio" name="customRadio1" label="Morning Peak" />
+                            <CustomInput type="radio" id="exampleCustomRadio2" name="customRadio1" label="Afternoon Peak" />
+                            <CustomInput type="radio" id="exampleCustomRadio3" name="customRadio1" label="Off Peak"/>
+                            <CustomInput type="radio" id="exampleCustomRadio4" name="customRadio1" label="Overall"/>
+                            {/* <CustomInput type="radio" id="exampleCustomRadio3" label="But not this disabled one" disabled /> */}
+                            {/* <CustomInput type="radio" id="exampleCustomRadio4" label="Can't click this label to select!" htmlFor="exampleCustomRadio4_X" disabled /> */}
+                        </div>
+                        </FormGroup>
+
+
+              {/* <p>
                 <span className="circle bg-default text-white"><i className="fa fa-map-marker" /></span> &nbsp;
                 146 Countries, 2759 Cities
-              </p>
-              <div className="row progress-stats">
+              </p> */}
+              {/* <div className="row progress-stats">
                 <div className="col-md-9 col-12">
                   <h6 className="name fw-semi-bold">Foreign Visits</h6>
                   <p className="description deemphasize mb-xs text-white">Some Cool Text</p>
@@ -138,7 +162,7 @@ class Dashboard extends React.Component {
                     <i className="fa fa-search text-light" />
                   </button>
                 </span>
-              </div>
+              </div> */}
 
             </Widget>
           </Col>

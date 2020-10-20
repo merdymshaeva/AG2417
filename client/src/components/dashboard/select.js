@@ -12,7 +12,7 @@ import $ from "jquery";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        color: 'blue',
+        color: 'green',
     },
     formControl: {
         margin: theme.spacing(1),
