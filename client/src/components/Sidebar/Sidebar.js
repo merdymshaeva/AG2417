@@ -1,201 +1,120 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { FormGroup, CustomInput, Input, InputGroup } from 'reactstrap';
+import Widget from '../../components/Widget/Widget';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Progress, Alert } from 'reactstrap';
-import { withRouter } from 'react-router-dom';
-import { dismissAlert } from '../../actions/alerts';
 import s from './Sidebar.module.scss';
 import LinksGroup from './LinksGroup';
 import SelectData from '../dashboard/select';
 
 import { changeActiveSidebarItem } from '../../actions/navigation';
-import { logoutUser } from '../../actions/user';
-import { setFlowMax, setLocMax, setTopFlows, setOpacity, setHover } from '../../actions/mapAction';
-import { SliderPresentation, InputSlider } from '../dashboard/slider'
+import { promiseAction, SET_PARAMS, GET_FLOW } from '../../actions/mapAction';
 
+import Example from '../../components/Sidebar/ExampleToolb';
+import Applicationen from '../../components/Sidebar/Examplealot';
+import WeightSelector from './weightSelector';
+import StatsRadios from './dataTypeRadios';
+import DemandTypeRadios from './demandTypeRadios';
+import SaveButton from './saveButton';
 
-class Sidebar extends React.Component {
-    static propTypes = {
-        sidebarStatic: PropTypes.bool,
-        sidebarOpened: PropTypes.bool,
-        dispatch: PropTypes.func.isRequired,
-        activeItem: PropTypes.string,
-        location: PropTypes.shape({
-            pathname: PropTypes.string,
-        }).isRequired,
-    };
+const Sidebar = (props) => {
+    const activeItem = useSelector(state => state.navigation.activeItem)
 
-    static defaultProps = {
-        sidebarStatic: false,
-        activeItem: '',
-    };
-
-    constructor(props) {
-        super(props);
-
-        this.doLogout = this.doLogout.bind(this);
+    const dispatch = useDispatch();
+    const [minTime, setMinTime] = useState();
+    const [maxTime, setMaxTime] = useState();
+    const query = useSelector(state => state.mapQuery)
+    const onTravelTime = () => {
+        dispatch({ type: SET_PARAMS, value: { minTime, maxTime } });
+        dispatch(promiseAction({ ...query }, GET_FLOW))
+    }
+    const [dataType, setDataType] = useState()
+    const onDataTypeChange = (event) => {
+        setDataType(event.target.value)
     }
 
-    componentDidMount() {
-        this.element.addEventListener('transitionend', () => {
-            if (this.props.sidebarOpened) {
-                this.element.classList.add(s.sidebarOpen);
-            }
-        }, false);
-    }
+    return (
+        <div
+            className={cx(s.root)}
+        >
+            <nav>
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.sidebarOpened !== this.props.sidebarOpened) {
-            if (nextProps.sidebarOpened) {
-                this.element.style.height = `${this.element.scrollHeight}px`;
-            } else {
-                this.element.classList.remove(s.sidebarOpen);
-                setTimeout(() => {
-                    this.element.style.height = '';
-                }, 0);
-            }
-        }
-    }
-
-    dismissAlert(id) {
-        this.props.dispatch(dismissAlert(id));
-    }
-
-    doLogout() {
-        this.props.dispatch(logoutUser());
-    }
-
-    render() {
-        return (
-            <nav
-                className={cx(s.root)}
-                ref={(nav) => {
-                    this.element = nav;
-                }}
-            >
                 <header className={s.logo}>
-                    <a href="https://demo.flatlogic.com/light-blue-react/">ShareFlow Stockholm</a>
-                    {/* <span className="fw-bold">Blue</span></a> */}
+                    <a href="#" data-toggle="tooltip" title="This is a project made by us">ShareFlow Stockholm</a>
+                    <Example />
                 </header>
+
+
                 <ul className={s.nav}>
                     <LinksGroup
-                        onActiveSidebarItemChange={activeItem => this.props.dispatch(changeActiveSidebarItem(activeItem))}
-                        activeItem={this.props.activeItem}
-                        header="Dashboard"
+                        onActiveSidebarItemChange={activeItem => dispatch(changeActiveSidebarItem(activeItem))}
+                        activeItem={activeItem}
+                        header="Dashboard-HOME"
                         isHeader
                         iconName="flaticon-home"
                         link="/app/main"
                         index="main"
                     />
-                    <h5 className={[s.navTitle, s.groupTitle].join(' ')}>FILTERS</h5>
-                    <InputSlider
-                        topFlows={this.props.topFlows}
-                        setTopFlows={v => this.props.dispatch(setTopFlows(v))}
-                    />
+                    <Widget
+                        className="bg-transparent"
+                        title={<h5> Values Weight</h5>}
+                    >
+                        <FormGroup>
+                            <StatsRadios onDataTypeChange={onDataTypeChange} />
+                        </FormGroup>
+                        <WeightSelector dataType={dataType} />
+                        <FormGroup>
+                            <h5 >Mode Choices {/* eslint-disable-next-line */} </h5>
+                            <Applicationen />
+                        </FormGroup>
+                        <FormGroup>
+                            <label className="exampleCheckbox">DEMAND TYPE</label>
+                            <DemandTypeRadios />
+                            <SaveButton />
+                        </FormGroup>
+                        <h6 >Travel Time [min]{/* eslint-disable-next-line */} </h6>
+                        <InputGroup>
+                            {/* <InputGroupAddon addonType="prepend" btn btn-outline-primary mr-2 btn-sm>TT</InputGroupAddon> */}
+                            <Input placeholder="Min" min={0} max={maxTime} size="sm" type="number" step="1"
+                                onChange={(e) => setMinTime(Number(e.target.value))}
+                            />
+                            <Input placeholder="Max" min={minTime || 1} max={100} size="sm" type="number" step="1"
+                                onChange={e => setMaxTime(Math.max(e.target.value, minTime || 1))}
+                            />
+                            <div className="form-group mt-2">
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-primary mr-2 btn-sm"
+                                    onClick={onTravelTime}
+                                >
+                                    Ok
+                                </button>
+                            </div>
+                            {/* <InputGroupAddon addonType="append">minutes</InputGroupAddon> */}
 
-                    {/* <LinksGroup
-                        onActiveSidebarItemChange={activeItem => this.props.dispatch(changeActiveSidebarItem(activeItem))}
-                        activeItem={this.props.activeItem}
-                        header="Typography"
-                        isHeader
-                        iconName="flaticon-network"
-                        link="/app/typography"
-                        index="core"
-                    />
-                    <LinksGroup
-                        onActiveSidebarItemChange={t => this.props.dispatch(changeActiveSidebarItem(t))}
-                        activeItem={this.props.activeItem}
-                        header="Tables Basic"
-                        isHeader
-                        iconName="flaticon-map-location"
-                        link="/app/tables"
-                        index="tables"
-                    />
-                    <LinksGroup
-                        onActiveSidebarItemChange={activeItem => this.props.dispatch(changeActiveSidebarItem(activeItem))}
-                        activeItem={this.props.activeItem}
-                        header="Notifications"
-                        isHeader
-                        iconName="flaticon-layers"
-                        link="/app/notifications"
-                        index="ui"
-                    />
-                    <LinksGroup
-                        onActiveSidebarItemChange={activeItem => this.props.dispatch(changeActiveSidebarItem(activeItem))}
-                        activeItem={this.props.activeItem}
-                        header="Components"
-                        isHeader
-                        iconName="flaticon-list"
-                        link="/app/forms"
-                        index="forms"
-                        childrenLinks={[
-                            {
-                                header: 'Charts', link: '/app/charts',
-                            },
-                            {
-                                header: 'Icons', link: '/app/icons',
-                            },
-                            {
-                                header: 'Maps', link: '/app/maps',
-                            },
-                        ]}
-                    /> */}
+                        </InputGroup>
+                        <h6 >Trip length </h6>
+                        <InputGroup>
+                            {/* <InputGroupAddon addonType="prepend" size="sm">TL</InputGroupAddon> */}
+                            <Input placeholder="Min" min={0} max={100} size="sm" color='' type="number" step="1" />
+                            <Input placeholder="Max" min={0} max={100} size="sm" type="number" step="1" />
+                            {/* <InputGroupAddon addonType="append">m</InputGroupAddon>  */}
+                        </InputGroup>
+                        <h5 className={s.navTitle}>
+                            <a href="#" data-toggle="tooltip" title="After changing the data you need to zoom to make the changes visible on the map.">DATA</a>
+                            <Example />
+                            {/* <a >ShareFlow Stockholm</a>  */}
+
+                            {/* <span className="fw-bold">Blue</span></a> */}
+                        </h5>
+                        <SelectData />
+                    </Widget>
                 </ul>
-                <h5 className={s.navTitle}>
-                    STYLE
-                    {/* eslint-disable-next-line */}
-                    <a className={s.actionLink}>
-                        <i className={`${s.glyphiconSm} glyphicon glyphicon-plus float-right`} />
-                    </a>
-                </h5>
-                {/* eslint-disable */}
-                <SliderPresentation
-                    flowMax={this.props.flowMax}
-                    setMaxFlowMagnitude={(v) => this.props.dispatch(setFlowMax(v))}
-                    locMax={this.props.locMax}
-                    setMaxLocationTotal={v => this.props.dispatch(setLocMax(v))}
-                    // opacity={this.props.opacity}
-                    setOpacity={v => this.props.dispatch(setOpacity(v))}
-                    hover={this.props.hover}
-                    setHover={v => this.props.dispatch(setHover(v))}
-                />
-                {/* eslint-enable */}
-                <h5 className={s.navTitle}>
-                    DATA
-                </h5>
-                <SelectData />
-                {/* <div className={s.sidebarAlerts}>
-                    {this.props.alertsList.map(alert => // eslint-disable-line
-                        <Alert
-                            key={alert.id}
-                            className={s.sidebarAlert} color="transparent"
-                            isOpen={true} // eslint-disable-line
-                            toggle={() => {
-                                this.dismissAlert(alert.id);
-                            }}
-                        >
-                            <span>{alert.title}</span><br />
-                            <Progress className={`bg-custom-dark progress-xs mt-1`} color={alert.color}
-                                value={alert.value} />
-                            <small>{alert.footer}</small>
-                        </Alert>,
-                    )}
-                </div> */}
             </nav>
-        );
-    }
+        </div>
+    );
 }
 
-function mapStateToProps(store) {
-    return {
-        sidebarOpened: store.navigation.sidebarOpened,
-        sidebarStatic: store.navigation.sidebarStatic,
-        alertsList: store.alerts.alertsList,
-        activeItem: store.navigation.activeItem,
-        flowMax: store.mapStyle.flowMax,
-        locMax: store.mapStyle.locMax
-    };
-}
 
-export default withRouter(connect(mapStateToProps)(Sidebar));
+export default Sidebar;

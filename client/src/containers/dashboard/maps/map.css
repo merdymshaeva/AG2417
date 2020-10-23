@@ -38,7 +38,8 @@
 }
 
 .MuiFormControl-root {
-    margin-left: 1.2em !important;
+    margin-top: -0.8em !important;
+    margin-left: 0em !important;
 }
 
 .MuiInputBase-root {
@@ -48,7 +49,13 @@
     margin-left: 1.2em;
 }
 
-.Widget_widget__xzerc.bg-transparent {
-    display: none;
-    box-shadow: none;
+.MuiTypography-colorTextSecondary {
+    color: rgb(245 245 245 / 97%) !important;
 }
+#weight-values {
+    margin-top: 2em;
+}
+
+/* body {
+    background: radial-gradient(farthest-side ellipse at 10% 0, #35429e8a 20%, #58d77773);
+} */

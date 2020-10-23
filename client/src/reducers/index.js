@@ -6,6 +6,7 @@ import register from './register';
 import valueReducer from './valueReducer';
 import { mapStyle } from './mapStyle';
 import mapData from './mapData';
+import mapQuery from './mapQuery';
 
 export default combineReducers({
   alerts,
@@ -13,5 +14,6 @@ export default combineReducers({
   navigation,
   register,
   mapData,
-  mapStyle
+  mapStyle,
+  mapQuery,
 });

@@ -58,3 +58,5 @@ client/packages/react-devtools-extensions/firefox/*.pem
 client/packages/react-devtools-extensions/shared/build
 client/packages/react-devtools-inline/dist
 client/packages/react-devtools-shell/dist
+
+*.sql

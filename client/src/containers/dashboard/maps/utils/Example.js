@@ -56,8 +56,8 @@ export default function Example(props) {
     // ...lonLat
   };
  
-  const flowMagnitudeExtent = [0, Math.round(20000 / flowMax)];
-  const locationTotalsExtent = [0, Math.round(200000 / locMax)];
+  const flowMagnitudeExtent = [0, Math.round(60 / flowMax)]; // Math.round(5000 / flowMax
+  const locationTotalsExtent = [0, locMax]; //Math.round(10 / locMax)
 
   const handleViewStateChange = (viewState) => {
     if (onViewStateChange) {
@@ -104,8 +104,8 @@ export default function Example(props) {
         flowMagnitudeExtent={flowMagnitudeExtent}
         locationTotalsExtent={locationTotalsExtent}
         opacity={opacity}
-        showTotals={true}
-        showLocationAreas={false}
+        showTotals={false}
+        showLocationAreas={true}
         showOnlyTopFlows={topFlows}
         flows={flows}
         locations={locations}
@@ -115,6 +115,9 @@ export default function Example(props) {
         getFlowMagnitude={getFlowMagnitude}
         onViewStateChange={handleViewStateChange}
         onHighlighted={handleHighlight}
+        maxFlowThickness={5}
+        maxLocationCircleSize={6}
+        outlineThickness={0}
       />
       <LegendBox bottom={35} left={10}>
         <LocationTotalsLegend />

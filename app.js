@@ -20,22 +20,8 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'ag2417',
-    password: 'kth10044!',
     port: 5432
 });
-
-// app.get('/', (req, res) => {
-//     pool.query('some query', (err, dbResponse) => {
-//         if (err) console.log(err);
-//         res.setHeader('Access-Control-Allow-Origin', '*');
-//         res.send("under /")
-//     })
-// })
-
-// app.post('/api', function (req, res) {
-//     console.log(req.body);
-//     console.log(req.query);
-// });
 
 app.post('/save_marker', (req, res) => {
     console.log('Data recieved: ' + JSON.stringify(req.body));
@@ -47,11 +33,12 @@ app.post('/save_marker', (req, res) => {
 });
 
 
-const FLOWS = ['AuxTimePeakT', 
-'BicycleDemandOtherT', 
-'CarDemandBusinessT', 'CarDemandOtherT', 'CarDemandWorkT', 'CarDistanceT', 'CarTimeOffpeakT', 'CarTimePeakT',
-'FirstWaitTimeOffpeakT', 'FirstWaitTimePeakT', 
-'InvehicleTimeOffpeakT', 'InvehicleTimePeakT'];
+const FLOWS = ["auxtimepeakt",
+    "bicycledemandothert",
+    "cardemandbusinesst", "cardemandothert", "cardemandworkt", "cardistancet", "cartimeoffpeakt", "cartimepeakt",
+    "firstwaittimeoffpeakt", "firstwaittimepeakt",
+    "invehicletimeoffpeakt", "invehicletimepeakt"];
+
 app.get('/api/get_flowtypes', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(FLOWS);
@@ -59,11 +46,57 @@ app.get('/api/get_flowtypes', (req, res) => {
 
 FLOWS.forEach(flow => {
     app.get(`/api/get_flows/${flow}`, (req, res) => {
-        pool.query(`SELECT * FROM public."${flow}";`, (err, dbResponse) => {
+        console.log('============req', req.query)
+        const { minTime, maxTime } = req.query
+
+        var q = `SELECT * FROM ${flow}`;
+        q = q.concat(minTime == undefined ? "" : ` where count>=${minTime} and count<=${maxTime};`);
+
+
+        console.log('---------query', q, req, minTime, minTime == undefined)
+
+        pool.query(q, (err, dbResponse) => {
             if (err) console.log(err);
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.send(dbResponse.rows);
         })
+    })
+})
+
+app.get(`/api/get_algorithm_output`, (req, res) => {
+    const { demandType, modes, s1, s2 } = req.query;
+    console.log('》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》query', demandType, modes)
+    console.log(s1, s2);
+    // const s1 = weights.map((w, i) => `${w}*sum(${groups[i]})`).join('+');
+    // const s2 = groups.map(g => `sum(${groups[i]})`).join('+')
+
+    var q = `
+    SELECT * FROM 
+    temporary_table_demand13('od_temp','${demandType}', '${modes}', '${s1}', '${s2}');
+    SELECT * FROM demand_temp;`
+    console.log('======================================================================', q)
+    pool.query(q, (err, dbResponse) => {
+        if (err) console.log(err);
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.send(dbResponse.rows);
+    })
+});
+
+
+app.get(`/api/get_flows/demand`, (req, res) => {
+    console.log('============req', req.query)
+    const { minTime, } = req.query
+
+    var q = `SELECT * FROM public."${flow}"`;
+    q = q.concat(minTime == undefined ? "" : ` where count>=${minTime} and count<=${maxTime};`);
+
+
+    console.log('---------query', q, req, minTime, minTime == undefined)
+
+    pool.query(q, (err, dbResponse) => {
+        if (err) console.log(err);
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.send(dbResponse.rows);
     })
 })
 
@@ -74,7 +107,7 @@ app.get('/api/get_locations', (req, res) => {
         (
         SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As
         geometry
-        , row_to_json((SELECT l FROM (SELECT abbr,baskod95) As l)) As
+        , row_to_json((SELECT l FROM (SELECT abbr::INT,baskod95) As l)) As
         properties
         FROM stockholm_centre_geom As lg
         ) As f ) As fc;`
@@ -86,16 +119,6 @@ app.get('/api/get_locations', (req, res) => {
 })
 
 
-// app.get('/api/get_markers', (req, res) => {
-
-
-//     pool.query(q, (err, dbResponse) => {
-//         if (err) console.log(err);
-//         res.setHeader('Access-Control-Allow-Origin', '*');
-//         res.send(dbResponse.rows);
-
-//     });
-// });
 
 app.get('/api/get_markers_geojson', (req, res) => {
     var q =
