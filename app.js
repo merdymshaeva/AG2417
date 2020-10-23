@@ -72,7 +72,7 @@ app.get(`/api/get_algorithm_output`, (req, res) => {
 
     var q = `
     SELECT * FROM 
-    temporary_table_demand13('od_temp','${demandType}', '${modes}', '${s1}', '${s2}');
+    temporary_table_demand1('od_temp','${demandType}', '${modes}', '${s1}', '${s2}');
     SELECT * FROM demand_temp;`
     console.log('======================================================================', q)
     pool.query(q, (err, dbResponse) => {

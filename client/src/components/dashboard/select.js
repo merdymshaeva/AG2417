@@ -41,7 +41,7 @@ export default function SelectData() {
 
     return (
         <FormControl className={classes.formControl}>
-            <Select defaultValue="AuxTimePeakT" id="grouped-select"
+            <Select defaultValue="auxtimepeakt" id="grouped-select"
                 onChange={onSelect}>
                 {flowTypes.map(flowType => <MenuItem value={flowType} key={flowType}>{flowType}</MenuItem>)}
             </Select>

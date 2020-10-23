@@ -1,18 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Row,
   Col,
 } from 'reactstrap';
-import PropTypes from 'prop-types';
-
 import Widget from '../../components/Widget/Widget';
+import PropTypes from 'prop-types';
+import { FormGroup } from 'reactstrap';
 import Map from './maps/flowmap';
 import s from './Dashboard.module.scss';
-import { setFlowMax, setLocMax, setTopFlows, setOpacity, setHover } from '../../actions/mapAction';
-import { SliderPresentation, InputSlider } from '../../components/dashboard/slider'
+import Applicationen from '../../components/Sidebar/Examplealot';
+import WeightSelector from '../../components/Sidebar/weightSelector';
+import StatsRadios from '../../components/Sidebar/dataTypeRadios';
+import DemandTypeRadios from '../../components/Sidebar/demandTypeRadios';
+import SaveButton from '../../components/Sidebar/saveButton';
 
-const Dashboard = () => {
+export default function Dashboard() {
   const propTypes = {
     sidebarStatic: PropTypes.bool,
     sidebarOpened: PropTypes.bool,
@@ -22,13 +25,7 @@ const Dashboard = () => {
       pathname: PropTypes.string,
     }).isRequired,
   };
-  const [sidebarOpened, flowMax, locMax, hover, topFlows] = useSelector(state => ([
-    state.navigation.sidebarOpened,
-    state.mapStyle.flowMax,
-    state.mapStyle.locMax,
-    state.mapStyle.hover,
-    state.mapStyle.topFlows,
-  ]))
+  const sidebarOpened = useSelector(state => state.navigation.sidebarOpened)
 
   const dispatch = useDispatch();
   const myRef = React.createRef()
@@ -54,12 +51,13 @@ const Dashboard = () => {
       }
     }
   });
+  const [dataType, setDataType] = useState()
+  const onDataTypeChange = (event) => {
+      setDataType(event.target.value)
+  }
 
   return (
     <div className={s.root} ref={myRef}>
-      <h1 className="page-title">Flow Map &nbsp;
-      </h1>
-
       <Row>
         <Col lg={9}>
           <Widget className="bg-transparent mapWidget">
@@ -69,31 +67,24 @@ const Dashboard = () => {
         </Col>
 
         <Col lg={3}>
-          <h5 className={[s.navTitle, s.groupTitle].join(' ')}><a title="Here you can decide how many of the possible flows you wnat to see">FILTERS</a></h5>
-
-          {/* <a href="#" data-toggle="tooltip" title="Play around with this as much as you want">ShareFlow Stockholm</a> */}
-          <InputSlider
-            topFlows={topFlows}
-            setTopFlows={v => dispatch(setTopFlows(v))}
-          />
-          <h5 className={s.navTitle}>
-            STYLE
-                {/* eslint-disable-next-line */}
-            <a className={s.actionLink}>
-              <i className={`${s.glyphiconSm} glyphicon glyphicon-plus float-right`} />
-            </a>
-          </h5>
-          {/* eslint-disable */}
-          <SliderPresentation
-            flowMax={flowMax}
-            setMaxFlowMagnitude={(v) => dispatch(setFlowMax(v))}
-            locMax={locMax}
-            setMaxLocationTotal={v => dispatch(setLocMax(v))}
-            // opacity={this.props.opacity}
-            setOpacity={v => dispatch(setOpacity(v))}
-            hover={hover}
-            setHover={v => dispatch(setHover(v))}
-          />
+          <Widget
+            className="bg-transparent"
+            title={<h5> Values Weight</h5>}
+          >
+            <FormGroup>
+              <StatsRadios onDataTypeChange={onDataTypeChange} />
+            </FormGroup>
+            <WeightSelector dataType={dataType} />
+            <FormGroup>
+              <h5 >Mode Choices {/* eslint-disable-next-line */} </h5>
+              <Applicationen />
+            </FormGroup>
+            <FormGroup>
+              <label className="exampleCheckbox">DEMAND TYPE</label>
+              <DemandTypeRadios />
+              <SaveButton />
+            </FormGroup>
+          </Widget>
           {/* eslint-enable */}
         </Col>
       </Row>
@@ -101,4 +92,4 @@ const Dashboard = () => {
   );
 }
 
-export default Dashboard;
+
