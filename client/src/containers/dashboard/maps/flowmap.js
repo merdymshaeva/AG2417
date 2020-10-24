@@ -24,7 +24,7 @@ function MapFrame() {
     useEffect(() => {
         dispatch({type: SET_URL, value: flowUrl});
         dispatch(promiseAction({ url: locationUrl }, GET_LOC));
-        dispatch(promiseAction({ url: flowUrl }, GET_FLOW));
+        dispatch(promiseAction({ url: flowUrl, params: {minLength: 1, maxLength: 100}}, GET_FLOW)); // 
     }, [])
 
     return (

@@ -45,6 +45,7 @@ export function promiseAction({ url, params}, actionType) {
     return (dispatch) => {
         axios.get(url, {params: params})
             .then(res => {
+                console.log('============= receive results ===========', res)
                 dispatch({
                     type: actionType,
                     value: res.data

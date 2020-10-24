@@ -35,6 +35,7 @@ export default function SaveButton() {
             params.s1 = Object.values(params.weightPar).map(v => `${v.weight}*sum("${v.par}")`).join('+');
             params.s2 = Object.values(params.weightPar).map(v => `sum("${v.par}")`).join('+');
             dispatch(promiseAction({url: '/api/get_algorithm_output', params}, GET_FLOW));
+            console.log('algorithm running')
         }
     }
 
@@ -50,7 +51,7 @@ export default function SaveButton() {
             <button type="submit" className="btn btn-outline-primary mr-2 btn-sm"
                 onClick={onSubmit}
             >
-                Save
+                Run
             </button>
         </div>
     )

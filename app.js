@@ -47,15 +47,54 @@ app.get('/api/get_flowtypes', (req, res) => {
 FLOWS.forEach(flow => {
     app.get(`/api/get_flows/${flow}`, (req, res) => {
         console.log('============req', req.query)
-        const { minTime, maxTime } = req.query
+        const { minTime, maxTime, minLength, maxLength } = req.query
 
         var q = `SELECT * FROM ${flow}`;
-        q = q.concat(minTime == undefined ? "" : ` where count>=${minTime} and count<=${maxTime};`);
+       // q = q.concat(minTime == undefined ? "" : ` where count>=${minTime} and count<=${maxTime}`,
+         //   minLength == undefined? "": 
+           // `;INNER JOIN (SELECT * FROM query_temporary_table_od(${maxLength},${minLength})) a ON 
+             // ${flow}.origin=a.origin AND ${flow}.dest = a.dest;`)
 
-
-        console.log('---------query', q, req, minTime, minTime == undefined)
+        //  var q =`/*WITH od_lista AS (SELECT * FROM query_temporary_table_od(${maxLength},${minLength}))*/
+        q =` SELECT ${flow}.* FROM ${flow},query_temporary_table_od(${minLength},${minLength})`;
+        //  INNER JOIN (SELECT * FROM query_temporary_table_od(${maxLength},${minLength})) a ON 
+        //       ${flow}.origin=a.origin AND ${flow}.dest = a.dest;`
+        // ; 
+  
+ 
+        console.log('---------query', q)
 
         pool.query(q, (err, dbResponse) => {
+            console.log('====================== receive response ', dbResponse)
+            if (err) console.log(err);
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.send(dbResponse.rows);
+        })
+    })
+});
+
+FLOWS.forEach(flow => {
+    app.get(`/api/get_flows_filtered/${flow}`, (req, res) => {
+        console.log('============req', req.query)
+        const { minTime, maxTime, minLength, maxLength } = req.query
+
+        // var q = `SELECT * FROM ${flow}`;
+        // q = q.concat(minTime == undefined ? "" : ` where count>=${minTime} and count<=${maxTime}`,
+        //     minLength == undefined? "": 
+        //     `;/*SELECT * FROM query_temporary_table_od(${maxLength},${minLength});*/
+        //     /*SELECT * from ${flow},(SELECT * FROM query_temporary_table_od(${maxLength}::DOUBLE PRECISION,${minLength}::DOUBLE PRECISION)) od
+        //     WHERE ${flow}.origin=od.origin AND ${flow}.dest = od.dest;*/
+
+         var q =`SELECT od.origin AS origin, od.dest AS dest, ${flow}.count AS count FROM ${flow}, (SELECT A.origin,A.dest,A.count FROM cardistancet A
+                WHERE A.count<${maxLength} AND A.count>${minLength}) od
+            WHERE ${flow}.origin=od.origin AND ${flow}.dest = od.dest;`
+        ;
+
+ 
+        console.log('---------query', q)
+
+        pool.query(q, (err, dbResponse) => {
+            console.log('====================== receive response ', dbResponse)
             if (err) console.log(err);
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.send(dbResponse.rows);
@@ -63,7 +102,7 @@ FLOWS.forEach(flow => {
     })
 })
 
-app.get(`/api/get_algorithm_output`, (req, res) => {
+app.get(`/api/get_algorithm_output`, (req, res) => { 
     const { demandType, modes, s1, s2 } = req.query;
     console.log('》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》query', demandType, modes)
     console.log(s1, s2);
@@ -72,33 +111,26 @@ app.get(`/api/get_algorithm_output`, (req, res) => {
 
     var q = `
     SELECT * FROM 
-    temporary_table_demand1('od_temp','${demandType}', '${modes}', '${s1}', '${s2}');
-    SELECT * FROM demand_temp;`
+    temporary_table_demand('${demandType}', '${modes}', '${s1}', '${s2}');
+/*
+    SELECT * FROM demand_temp;*/`
     console.log('======================================================================', q)
     pool.query(q, (err, dbResponse) => {
+        console.log('====================== receive response ', dbResponse)
         if (err) console.log(err);
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.send(dbResponse.rows);
     })
+    //var q = `
+    //SELECT * FROM demand_temp;`
+    //console.log('======================================================================', q)
+    //pool.query(q, (err, dbResponse) => {
+    //    console.log('====================== receive response ', dbResponse)
+    //    if (err) console.log(err);
+    //    res.setHeader('Access-Control-Allow-Origin', '*');
+    //    res.send(dbResponse.rows);
+    //})
 });
-
-
-app.get(`/api/get_flows/demand`, (req, res) => {
-    console.log('============req', req.query)
-    const { minTime, } = req.query
-
-    var q = `SELECT * FROM public."${flow}"`;
-    q = q.concat(minTime == undefined ? "" : ` where count>=${minTime} and count<=${maxTime};`);
-
-
-    console.log('---------query', q, req, minTime, minTime == undefined)
-
-    pool.query(q, (err, dbResponse) => {
-        if (err) console.log(err);
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.send(dbResponse.rows);
-    })
-})
 
 
 app.get('/api/get_locations', (req, res) => {
@@ -140,55 +172,5 @@ app.get('/api/get_markers_geojson', (req, res) => {
     });
 });
 
-app.get('/api/get_closest_marker', (req, res) => {
-    console.log('Request received on the server to sendclosest marker ');
-    var lat = req.query.lat;
-    var lon = req.query.lon;
-    var q =
-        `with tbl_to_closest_point as (
-            with query_point as
-            (
-                select (ST_GeomFromText('POINT(${lon} ${lat})', 4326)) as geom 
-            )
-            select id, name,
-            st_distance(st_transform(m.geom, 32633), st_transform((qp.geom), 32633)) as distance, 
-            ST_MakeLine(m.geom, qp.geom) as line_geom,
-            ST_buffer(m.geom, 0.005) as buffer_geom
-            from tbl_markers m, query_point qp 
-            order by st_distance(st_transform(m.geom, 32633),st_transform(qp.geom, 32633)) limit 1 
-            )
-            select row_to_json(fc) FROM
-            (
-                SELECT 'FeatureCollection' As type,
-                array_to_json(array_agg(f)) As features 
-                FROM(
-                    SELECT 'Feature' As type, 
-                            ST_AsGeoJSON(lg.line_geom)::json As geometry, 
-                            row_to_json((SELECT l FROM (SELECT id,name,distance) As l
-                    )) As properties
-                FROM tbl_to_closest_point As lg
-                ) As f
-            ) As fc
-            union all
-            select row_to_json(fc2) FROM (
-                SELECT 'FeatureCollection' As type, 
-                        array_to_json(array_agg(f2)) As features
-                FROM (
-                    SELECT 'Feature' As type, 
-                            ST_AsGeoJSON(lg1.buffer_geom)::json As geometry, 
-                            row_to_json((
-                                SELECT l FROM (
-                                    SELECT id,name,distance) As l)
-                                ) As properties
-                            FROM tbl_to_closest_point As lg1
-                ) As f2 
-            ) As fc2;
-        `;
-    console.log(q);
-    pool.query(q, (err, dbResponse) => {
-        if (err) console.log(err);
-        res.send(dbResponse.rows);
-    });
-});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

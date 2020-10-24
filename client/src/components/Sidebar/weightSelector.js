@@ -171,7 +171,7 @@ export default function WeightSelector({ dataType }) {
         <div id="weight-values">
             <FormControl component="fieldset" error={error}>
                 {weightGroups.map(group => (
-                    <InputGroup>
+                    <InputGroup key={group.name}>
                         <label className="exampleCheckbox">{group.name}</label>
                         <Input placeholder="" min={0} max={1} size="sm" type="number" step="0.1"
                             onChange={(e) => onInput(e.target.value, group.name)}
