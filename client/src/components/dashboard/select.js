@@ -36,12 +36,15 @@ export default function SelectData() {
 
     const onSelect = (e) => {
         dispatch(promiseAction({ ...query, url: '/api/get_flows/' + e.target.value }, GET_FLOW));
-        dispatch(setLonLat({ longitude: 8.645888, latitude: 47.411184 })) // TODO: not working
+        dispatch(setLonLat({ longitude: 8.645888, latitude: 47.411184 })) 
     }
-
+    const onSelect_Loc = (e) => {
+        dispatch(promiseAction({ ...query, url: '/api/get_flows_by_location/' + e.target.value }, GET_FLOW));
+        dispatch(setLonLat({ longitude: 8.645888, latitude: 47.411184 })) 
+    }
     return (
         <FormControl className={classes.formControl}>
-            <Select defaultValue="auxtimepeakt" id="grouped-select"
+            <Select defaultValue="bicycledemandother_full" id="grouped-select"
                 onChange={onSelect}>
                 {flowTypes.map(flowType => <MenuItem value={flowType} key={flowType}>{flowType}</MenuItem>)}
             </Select>

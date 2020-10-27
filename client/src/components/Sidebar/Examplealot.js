@@ -37,11 +37,11 @@ const Applicationen = () => {
       })
     });
   };
-
+/*
   const selectAll = () => selectAllCheckboxes(true);
 
   const deselectAll = () => selectAllCheckboxes(false);
-
+*/
   const handleCheckboxChange = changeEvent => {
     const { name } = changeEvent.target;
 

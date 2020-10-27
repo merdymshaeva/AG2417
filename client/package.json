@@ -92,6 +92,7 @@
     "mapbox-gl": "^1.12.0",
     "material-ui-icons": "^1.0.0-beta.36",
     "moment": "^2.27.0",
+    "multiselect-react-dropdown": "^1.6.1",
     "nodemon": "^2.0.4",
     "pg": "^8.4.0",
     "rc-hammerjs": "^0.6.10",

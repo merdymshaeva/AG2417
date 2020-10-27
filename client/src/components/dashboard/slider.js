@@ -13,13 +13,13 @@ const TOP_FLOW_MAX = 1000;
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: 100 + theme.spacing(3) * 2,
+        width: 150 + theme.spacing(3) * 2,
     },
     margin: {
         height: theme.spacing(3),
     },
     input: {
-        width: 42,
+        width: 50,
     },
 }));
 
@@ -52,18 +52,20 @@ export const SliderPresentation = ({ flowMax, locMax, setMaxFlowMagnitude, setMa
                 aria-label="custom thumb label"
                 value={flowMax || 5}
                 min={1}
-                max={10}
+                max={1000000}
                 onChange={(evt, value) => setMaxFlowMagnitude(value)}
             />
+            {/*
             <div>Node size</div>
             <Slider
                 ValueLabelComponent={ValueLabelComponent}
                 aria-label="custom thumb label"
                 value={locMax || 5}
                 min={1}
-                max={10}
+                max={100}
                 onChange={(evt, value) => setMaxLocationTotal(value)}
             />
+            */}
             <div>Opacity</div>
             <Slider
                 ValueLabelComponent={ValueLabelComponent}

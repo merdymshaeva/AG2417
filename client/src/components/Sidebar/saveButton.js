@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Alert } from 'reactstrap';
 import IconButton from '@material-ui/core/IconButton';
@@ -25,7 +25,11 @@ export default function SaveButton() {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [warning, setWarning] = useState('')
-    const params = useSelector(state => state.mapQuery.params);
+    const [params, flows] = useSelector(state => [state.mapQuery.params, state.mapData.data.flows]);
+    useEffect(() => {
+        setWarning('Done! Tip: Try dragging the map or zooming in/out to see the changes. :)');
+        //setOpen(true);
+    }, [flows]);
     const onSubmit = () => {
         const warn = checkParams(params);
         if (warn) {
@@ -35,7 +39,8 @@ export default function SaveButton() {
             params.s1 = Object.values(params.weightPar).map(v => `${v.weight}*sum("${v.par}")`).join('+');
             params.s2 = Object.values(params.weightPar).map(v => `sum("${v.par}")`).join('+');
             dispatch(promiseAction({url: '/api/get_algorithm_output', params}, GET_FLOW));
-            console.log('algorithm running')
+            setWarning('Algorithm is running...Do not close this alert');
+            setOpen(true);
         }
     }
 

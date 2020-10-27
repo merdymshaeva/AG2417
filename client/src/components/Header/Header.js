@@ -133,6 +133,11 @@ class Header extends React.Component {
               <i className="glyphicon glyphicon-search text-white" />
             </NavLink>
           </NavItem>
+           <UncontrolledAlert className={`${s.alert} mr-3 d-lg-down-none animate__animated animate__bounceIn animate__delay-1s`}>
+          <i className="fa fa-info-circle mr-1" /> Check out some of the sources! <button className="btn-link" onClick={() => window.open('https://www.trafikverket.se/contentassets/ff9381c63cfe46849b98c33027ce53e6/sampers-2018/program_trafikverkets_presentationer.pdf','_blank')}>Trafikverket</button>
+          
+          <button className="btn-link" onClick={() => window.open('https://www.segmentationportal.com/se','_blank')}>Mosaic Sweden(sv)</button>
+        </UncontrolledAlert> 
           <h1 className="page-title">Flow Map &nbsp;</h1>
           <Dropdown nav isOpen={this.state.settingsOpen} toggle={this.toggleSettingsDropdown}>
             <DropdownToggle nav className={`${s.navItem} text-white`}>
@@ -149,7 +154,7 @@ class Header extends React.Component {
                 <Button color="primary" onClick={() => this.toggleVisibilitySidebar('show')} className={this.props.sidebarVisibility === 'show' ? 'active' : ''}>Show</Button>
                 <Button color="primary" onClick={() => this.toggleVisibilitySidebar('hide')} className={this.props.sidebarVisibility === 'hide' ? 'active' : ''}>Hide</Button>
               </ButtonGroup>
-
+{/*}
               <h6 className="mt-2">DO YOU WANT HAPPY BUTTON OR SAD ONES?</h6>
               <FormGroup check>
                 <Input type="radio" name="radio1" />{' '}
@@ -159,7 +164,7 @@ class Header extends React.Component {
                 <Input type="radio" name="radio1" />{' '}
                      HAPPY BUTTON NR TWO
               </FormGroup>
-
+    */}
             </DropdownMenu>
           </Dropdown>
           <NavItem className="d-md-none">

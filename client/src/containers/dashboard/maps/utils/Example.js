@@ -52,7 +52,7 @@ export default function Example(props) {
       window.innerWidth,
       window.innerHeight,
     ]),
-    zoom:12,
+    zoom:8,
     // ...lonLat
   };
  
@@ -119,9 +119,9 @@ export default function Example(props) {
         maxLocationCircleSize={6}
         outlineThickness={0}
       />
-      <LegendBox bottom={35} left={10}>
+  {/*    <LegendBox bottom={35} left={10}>
         <LocationTotalsLegend />
-      </LegendBox>
+  </LegendBox>*/}
       <LegendBox bottom={35} right={10}>
         {`Showing ${flows.length > topFlows ? `top ${topFlows} of` : ''} ${flows.length} flows. `}
       </LegendBox>

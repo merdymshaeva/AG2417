@@ -2,8 +2,6 @@ import { SET_PARAMS, SET_URL } from '../actions/mapAction';
 const initialState = {
     url: null,
     params: {
-      minTime: null,
-      maxTime: null,
       minLength: null,
       maxLength: null,
       flowUrl: null,
@@ -12,6 +10,7 @@ const initialState = {
       weightPar: {},
       s1: null,
       s2: null,
+      name_2: null
     }
 }
 

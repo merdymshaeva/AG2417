@@ -15,7 +15,8 @@ mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 // default flowlayer and location layer
 const locationUrl = "/api/get_locations"; // process.env.PUBLIC_URL + "/basemma.geojson";//
-const flowUrl = '/api/get_flows/auxtimepeakt';
+const flowUrl = '/api/get_flows/bicycledemandother_full';
+//const municipalityUrl = '/api/get_flows_by_location/bicycledemandother_full';
 
 
 function MapFrame() {
@@ -24,7 +25,9 @@ function MapFrame() {
     useEffect(() => {
         dispatch({type: SET_URL, value: flowUrl});
         dispatch(promiseAction({ url: locationUrl }, GET_LOC));
-        dispatch(promiseAction({ url: flowUrl, params: {minLength: 1, maxLength: 100}}, GET_FLOW)); // 
+        dispatch(promiseAction({ url: flowUrl, params: {minLength: 0, maxLength: 100,name_2:`'Stockholm'`}}, GET_FLOW));
+        
+      //  dispatch(promiseAction({ url: municipalityUrl, params: {name_2:'Stockholm'}}, GET_FLOW));  // 
     }, [])
 
     return (

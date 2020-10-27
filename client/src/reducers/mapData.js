@@ -1,12 +1,12 @@
 import { GET_TYPES, GET_LOC, GET_FLOW, PROMISE_FAILURE } from '../actions/mapAction';
-
+/*
 function normalize(flows) {
     const weights = flows.map(fl => fl.count)
     const min = Math.min(...weights)
     const max = Math.max(...weights)
-    return flows.map(fl => ({...fl, count: (fl.count- min)/ (max - min)}))
+    return flows.map(fl => ({...fl, count: (fl.count- min)/ (max - min+0.00000000001)}))
 }
-
+*/
 const initialState = {
     types: [],
     data: {
@@ -31,7 +31,7 @@ export default function mapData(state = initialState, action) {
         case GET_FLOW:
             return {
                 ...state,
-                data: { ...state.data, flows: normalize(action.value) }
+                data: { ...state.data, flows: action.value }
             }
         case PROMISE_FAILURE:
             return {
