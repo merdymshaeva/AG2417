@@ -134,7 +134,7 @@ class Header extends React.Component {
             </NavLink>
           </NavItem>
            <UncontrolledAlert className={`${s.alert} mr-3 d-lg-down-none animate__animated animate__bounceIn animate__delay-1s`}>
-          <i className="fa fa-info-circle mr-1" /> Check out some of the sources! <button className="btn-link" onClick={() => window.open('https://www.trafikverket.se/contentassets/ff9381c63cfe46849b98c33027ce53e6/sampers-2018/program_trafikverkets_presentationer.pdf','_blank')}>Trafikverket</button>
+          <i className="fa fa-info-circle mr-1" /> Check out some of our sources! <button className="btn-link" onClick={() => window.open('https://www.trafikverket.se/contentassets/ff9381c63cfe46849b98c33027ce53e6/sampers-2018/program_trafikverkets_presentationer.pdf','_blank')}>Trafikverket</button>
           
           <button className="btn-link" onClick={() => window.open('https://www.segmentationportal.com/se','_blank')}>Mosaic Sweden(sv)</button>
         </UncontrolledAlert> 

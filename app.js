@@ -34,10 +34,8 @@ app.post('/save_marker', (req, res) => {
 });
 
 
-const FLOWS = [
-    "bicycledemandothert","bicycledemandother_full","cardemandother_full","cardemandwork_full","cardemandbusiness_full","cardistance_full","transitdemandother_full","transitdemandbusiness_full",
-    "transitdemandwork_full","walkdemandother_full","walkdemandwork_full",
-    "cardemandbusinesst", "cardemandother_full", "cardemandworkt", "cardistancet"];
+const FLOWS = ["bicycledemandother_full","cardemandother_full","cardemandwork_full","cardemandbusiness_full","cardistance_full","transitdemandother_full","transitdemandbusiness_full",
+    "transitdemandwork_full","walkdemandother_full","walkdemandwork_full", "cardemandother_full"];
 
 app.get('/api/get_flowtypes', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -50,18 +48,10 @@ FLOWS.forEach(flow => {
         const { minLength, maxLength,name_2 } = req.query
 
         var q = `SELECT * FROM ${flow};`
-        if (name_2.includes('All')) {
+        if (name_2.includes('All')||!name_2) {
             q = `WITH
                  b AS (SELECT * FROM query_temporary_table_od1(${maxLength},${minLength})) 
                        SELECT a.* FROM ${flow} a,b WHERE (a.origin=b.origin AND a.dest=b.dest) ;`
-        } else if (!name_2) {
-            q = `     
-                          WITH c AS (SELECT abbr FROM basemma WHERE name_2 = 'Stockholm'),
-                               d  AS (SELECT abbr FROM basemma WHERE name_2 = 'Stockholm'),
-                               b AS (SELECT * FROM query_temporary_table_od1(${maxLength},${minLength}))
-                               
-                          SELECT a.* FROM ${flow} a,b,c,d WHERE (a.origin=b.origin AND a.dest=b.dest) 
-                          AND (c.abbr=a.origin AND d.abbr=a.dest);`
         } else {    q = `     
                           WITH c AS (SELECT abbr FROM basemma WHERE name_2 IN (${name_2})),
                                d  AS (SELECT abbr FROM basemma WHERE name_2 IN (${name_2})),
@@ -93,7 +83,8 @@ app.get(`/api/get_algorithm_output`, (req, res) => {
              
              SELECT origin,dest,100*((count-min)/(max-min+0.000000001))::real AS count FROM dem,mm GROUP BY origin,dest,count,min,max;`;
     }    else {
-    q = ` WITH dem AS (WITH c AS (SELECT abbr FROM basemma WHERE name_2 IN (${name_2})),
+                 q = ` UPDATE municipality_popularity SET popularity = popularity+1 WHERE municipality IN (${name_2});`;
+                 q = `WITH dem AS (WITH c AS (SELECT abbr FROM basemma WHERE name_2 IN (${name_2})),
                             d  AS (SELECT abbr FROM basemma WHERE name_2 IN (${name_2}))
     
                        SELECT a.* FROM 
